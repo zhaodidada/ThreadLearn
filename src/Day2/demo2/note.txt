@@ -1,0 +1,19 @@
+1.Map和Set
+	- 不需要多线程HashMap,TreeMap,LinkedHashMap
+	- 并发量比较小，就用HashTable,Collections.synchronize……
+	- 高并发情况，考虑用ConcurrentHashMap，同时还要排序就用ConcurrentSkipListMap
+	
+2.使用队列的情况
+	- 不需要多线程ArrayList，LinkedList
+	- 低并发：Collections.synchronize……,vector
+	- 高并发：
+		- ConcurrentLinkedQueue
+		- 阻塞式LinkedBlockingQueue,ArrayBlockingQueue、DelayQueue、TransferQueue（游戏服务器消息处理）
+		SynchronousQueue
+		
+	- CopyOnRightList，写的非常少，读的非常多，（监听器队列）
+	
+3.有界队列和无界队列
+	- 区分：有界队列基本上等同于阻塞队列，他们有一个容量的概念，满了等这往里放，空了等着往外取
+	- 特点或原理：有界队列用了锁，无界队列没有锁，要么可以随意修改数量，要么可以自己扩容，用cas保证原子性
+		

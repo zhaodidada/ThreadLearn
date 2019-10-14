@@ -1,0 +1,11 @@
+1.synchronized和ReentrantLock
+	a) ReentrantLock可以替代synchronized
+	b) ReentrantLock比synchronized更灵活
+	c) 该用synchronized还是用synchronized，它的效率相比1.5的时候，已经提升很多了，只有用到了特别灵活的加锁时，才用ReentrantLock
+2.生产者消费者模型
+	a) wait() 和  notifyAll()，最原始的写法，类似汇编
+	b) 新的同步器，Lock和Condition，使用condition，精确的指定让某些线程醒来，某些线程等待
+3.ThreadLocal线程内部变量
+	a) 只有线程自己访问，不会与其他线程互通，即其他线程访问不到该线程的内部变量	
+	b) 应用比较广泛，尤其在框架中，比如Hibernate中的sessionfactory，中的session就是存在ThreadLocal中
+	如果只有一个session，那么所有线程访问是需要加锁的，而使用ThreadLocal是每个线程私有的，就不需要加锁（使用空间换时间）

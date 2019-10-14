@@ -1,0 +1,75 @@
+1. ConcurrentMap<K, V>(Demo2_1)
+	- ConcurrentHashMap<K, V>	并发较高，无序
+	- ConcurrentSkipListMap<K, V>	并发较高，有序
+	
+   Map<K, V>
+   	- HashMap<K, V>	Hash表实现
+   	- TreeMap<K, V>	树实现
+   	- HashTable<K, V>	最老的一种实现，所有实现都是带锁的，现在用的非常少，效率比较低
+   	
+	#并发不高的情况下可以使用Collections.synchronize……()
+	
+	#写时复制的容器：写的效率非常低，但读的效率非常高 (Demo2_2)
+	CopyOnWriteArrayList<E>
+	CopyOnWriteArraySet<E>
+	当你要修改这个容器（添加元素）的时候，容器会复制出一个新的，然后把这个新的引用指过去
+	它最大的好处是读的时候不用加锁，因为复制到新的引用了，就不用加锁去读了（只有特定的情形下才会用到）
+
+2.Queue(Demo2_3)
+	- java.util.concurrent.BlockingQueue
+	- java.util.concurrent.LinkedBlockingQueue
+	- java.util.concurrent.ArrayBlockingQueue
+	- java.util.concurrent.PriorityBlockingQueue
+	- java.util.concurrent.ConcurrentLinkedQueue
+	- ……
+	
+	#Queue分两种：在高并发情况下，可以使用两种
+		- Queue
+			- ConcurrentLinkedQueue 内部无锁用cas的
+			
+		- BlockingQueue 阻塞式的，生产消费者模式中阻塞式的一种实现
+			- LinkedBlockingQueue
+			- ArrayBlockingQueue
+			
+		#提供put()，如果put满了，就会等待
+		#提供take()，往外拿，如果空了，就会等待
+		
+	#在有界的Array Queue里面
+		- 如果使用add()，当容量满了，再往里添加会报异常
+		- 如果使用poll()，同样情况，会返回false，让你自己处理
+		- 如果使用offer()，同样情况，会阻塞；另外还有一种是带参数的offer(E e, long timeout, TimeUnit unit)，按时间段阻塞
+		- 如果使用put()，满了会阻塞，无限制阻塞下去，什么时候不满了才继续
+	
+	#PriorityQueue和PriorityBlockingQueue
+		
+3.Duque双向队列
+
+4.DelayQueue（无界队列）(Demo2_4)
+	#加进去的每个元素，只有等一段时间才能往外拿
+	#默认是排好顺序的，要等待的时间比较短的，先往外拿
+	#可以用来做定时执行任务
+	
+5.TransferQueue<E>-[interface] 和  SynchronousQueue<E>-[class] (Demo2_5)
+	#都是blocking queue
+	
+	#TransferQueue: 提供了transfer(E e) 和  tryTransfer(E e)
+		- 有一个队列，消费者先启动，然后生产者启动，这个生产者会先判断是否存在消费者，如果存在，生产者会把生产的东西直接给消费者
+		- 举例：
+			英雄联盟中，一场匹配，有10个用户连到服务器上
+			一次团战中，有一个用户操作寒冰，放出了R技能
+			服务器上会有一个消息队列，不断的接收不同客户端发来的消息，然后这些消息都是由不同的线程传来的
+			正常处理，我们会把这些消息往队列中添加，然后挨个拿出来处理（通知其他客户端）
+			但是这种方式太慢了，于是这个时候直接把消息给客户端就行了，不要让客户端在这等着
+			效率高了，那么服务能够同时支持并发的数量就更多了
+		
+		- TransferQueue用在并发量较大的情况下，实时消息处理中用的比较多，新的框架用LinkedTransferQueue就比较多（Netty）
+		- 没有消费者线程的时候，调用transfer()就会阻塞，这个时候应该用tryTransfer()
+		- TransferQueue是有容量的队列，如果没有消费者线程的时候，我们还可以把消息放入TransferQueue中
+		- 如果没有消费者线程的时候，用put()、offer() 或者用  add()都不会阻塞
+		
+	#SynchronousQueue同步队列，特殊的TransferQueue
+		- SynchronousQueue是没有容量的队列，容量为0，一旦没有消费者线程去马上消费，就会报错（用add）
+		要用put()，当没有消费者的时候就阻塞，put里用的就是transfer
+
+
+	

@@ -1,0 +1,8 @@
+1.同步方法和非同步方法是否可以同时调用？
+
+2.执行m1过程之中，m2是否能被执行？
+
+
+	public synchronized void m1() {……}
+	
+	public void m2() {……}
